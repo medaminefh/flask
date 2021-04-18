@@ -1,0 +1,22 @@
+{% extends "index.html" %}
+
+{% block title %}
+Create a Post
+{% endblock %}
+
+{% block body %}
+
+<form action="/post" method="post">
+    <div class="form-group">
+        <input required autocomplete="off" autofocus class="form-control" name="title" placeholder="Title" type="text">
+    </div>
+    <div class="form-group">
+        <input required class="form-control" name="body" placeholder="Say Something..." type="text">
+    </div>
+    <div class="form-group">
+        <input type="file" name="img" accept="image/*">
+    </div>
+    <button class="btn btn-primary" type="submit">Create</button>
+</form>
+
+{% endblock %}

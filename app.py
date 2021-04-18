@@ -1,7 +1,8 @@
 from flask import Flask, render_template, request, redirect, session
 from flask_session import Session
+import cloudinary.uploader
 from cs50 import SQL
-from helpers import apology
+from helpers import apology, login_required, cloudinary
 from tempfile import mkdtemp
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -20,19 +21,23 @@ db = SQL("sqlite:///sql.db")
 
 
 @app.route('/')
+@login_required
 def hello_world():
-    if(request.method == "GET"):
-        print(db.execute("SELECT * FROM users"))
-        '''
-        db.execute(
-            "CREATE TABLE users (id INTEGER, username TEXT, password TEXT, PRIMARY KEY(id))")
-        '''
-        return render_template("articles.html")
-    else:
-        return "POST FROM / {hello_world function}"
+    print(db.execute("SELECT * FROM posts"))
+    '''
+    db.execute(
+        "CREATE TABLE posts (id INTEGER, user_id INTEGER, title TEXT, body TEXT, img_url TEXT DEFAULT FALSE, PRIMARY KEY(id))")
+    db.execute(
+        "CREATE TABLE users (id INTEGER, username TEXT, password TEXT, PRIMARY KEY(id))")
+    '''
+    posts = db.execute(
+        "SELECT * FROM posts WHERE user_id = ?", session["user_id"])
+    user = db.execute("SELECT * FROM users WHERE id = ?", session["user_id"])
+    return render_template("home.html", posts=posts, user=user[0])
 
 
 @app.route("/about", methods=['GET', "POST"])
+@login_required
 def about():
     if(request.method == "GET"):
         return render_template("about.html", name="med Amine Fh")
@@ -49,18 +54,25 @@ def login():
         if not username or not password:
             return apology("fill all the fields!")
         user = db.execute("SELECT * FROM users WHERE username = ?", username)
-        print("User :", user)
         if not user:
             return apology("username not exist", 404)
         if not check_password_hash(user[0]['password'], password):
             return apology("Password Incorrect!")
-        return render_template("home.html", user=user[0])
+        session["user_id"] = user[0]['id']
+        return redirect("/")
     return render_template("login.html")
+
+
+@app.route("/logout")
+def logout():
+    # clear the session
+    session.clear()
+    # redirect to the login page
+    return redirect("/")
 
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
-    session.clear()
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
@@ -85,8 +97,26 @@ def register():
 
 
 @app.route("/user/<name>")
+@login_required
 def user(name):
     return '<h1>Hello %s</h1>' % name, 205
+
+
+@app.route("/post", methods=["GET", "POST"])
+@login_required
+def post():
+    if request.method == "POST":
+        title = request.form.get("title")
+        body = request.form.get("body")
+        img = request.form.get("img")
+        if not title or not body:
+            return apology("post can't be empty!")
+        if img:
+            img = cloudinary.uploader.upload(img)
+        db.execute("INSERT INTO posts (user_id, title, body, img_url) VALUES (?, ?, ?, ?)",
+                   session['user_id'], title, body, img)
+        return redirect("/")
+    return render_template("posts.html")
 
 
 @app.errorhandler(404)
