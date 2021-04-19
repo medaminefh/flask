@@ -4,16 +4,25 @@
 HOME
 {% endblock %}
 
-{% block body %}
+{% block main %}
 
-<p>{{ user.username }}</p>
 {% if posts %}
 {% for post in posts %}
-<h1>{{ post.title }}</h1>
-<h3>{{ posts.body }}</h3>
+<div class="card">
+    <div class="card-header">
+        {{ post.title }}
+    </div>
+    <div class="card-body">
+        <blockquote class="blockquote mb-0">
+            <p>{{ post.body }}</p>
+            <footer class="blockquote-footer">{{ user.username }}</footer>
+        </blockquote>
+    </div>
+</div>
+<h3></h3>
 {% endfor %}
 {% else %}
-<h2>There is No Posts!</h2>
+<h2>There is No Posts! {{ user.username }}</h2>
 {% endif %}
 
 

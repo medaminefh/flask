@@ -32,7 +32,7 @@
             {% if session.user_id %}
             <ul class="navbar-nav mr-auto mt-2">
                 <li class="nav-item"><a class="nav-link" href="/post">Create a Post</a></li>
-                <li class="nav-item"><a class="nav-link" href="/">Buy</a></li>
+                <li class="nav-item"><a class="nav-link" href="/profile">Profile</a></li>
                 <li class="nav-item"><a class="nav-link" href="/">Sell</a></li>
                 <li class="nav-item"><a class="nav-link" href="/">History</a></li>
             </ul>
@@ -48,7 +48,7 @@
         </div>
     </nav>
     <main class="container p-5">
-        {% block body %}{% endblock %}
+        {% block main %}{% endblock %}
     </main>
 
     <footer class="small text-center text-muted">

@@ -32,17 +32,9 @@ def hello_world():
     '''
     posts = db.execute(
         "SELECT * FROM posts WHERE user_id = ?", session["user_id"])
-    user = db.execute("SELECT * FROM users WHERE id = ?", session["user_id"])
-    return render_template("home.html", posts=posts, user=user[0])
-
-
-@app.route("/about", methods=['GET', "POST"])
-@login_required
-def about():
-    if(request.method == "GET"):
-        return render_template("about.html", name="med Amine Fh")
-    else:
-        return "Hello world from POST about!"
+    user = db.execute("SELECT * FROM users WHERE id = ?",
+                      session["user_id"])[0]
+    return render_template("home.html", posts=posts, user=user)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -94,6 +86,14 @@ def register():
         return redirect("/")
     else:
         return render_template("register.html")
+
+
+@app.route("/profile")
+@login_required
+def profile():
+    user = db.execute("SELECT * FROM users WHERE id = ?",
+                      session["user_id"])[0]
+    return render_template("profile.html", user=user)
 
 
 @app.route("/user/<name>")
