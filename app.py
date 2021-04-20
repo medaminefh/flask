@@ -1,13 +1,13 @@
 from flask import Flask, render_template, request, redirect, session
 from flask_session import Session
-import cloudinary.uploader
 from cs50 import SQL
-from helpers import apology, login_required, cloudinary
+from helpers import apology, login_required
 from tempfile import mkdtemp
 from werkzeug.security import check_password_hash, generate_password_hash
 
 # This line of code below tells flask to convert this file to a flask app
 app = Flask(__name__)
+
 # Configure session to use filesystem (instead of signed cookies)
 app.config["SESSION_FILE_DIR"] = mkdtemp()
 app.config["SESSION_PERMANENT"] = False
@@ -17,6 +17,7 @@ Session(app)
 # Auto reload App
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 
+# Connect to the db
 db = SQL("sqlite:///sql.db")
 
 
@@ -24,6 +25,7 @@ db = SQL("sqlite:///sql.db")
 @login_required
 def hello_world():
     print(db.execute("SELECT * FROM posts"))
+
     '''
     db.execute(
         "CREATE TABLE posts (id INTEGER, user_id INTEGER, title TEXT, body TEXT, img_url TEXT DEFAULT FALSE, PRIMARY KEY(id))")
@@ -111,12 +113,18 @@ def post():
         img = request.form.get("img")
         if not title or not body:
             return apology("post can't be empty!")
-        if img:
-            img = cloudinary.uploader.upload(img)
+
         db.execute("INSERT INTO posts (user_id, title, body, img_url) VALUES (?, ?, ?, ?)",
                    session['user_id'], title, body, img)
         return redirect("/")
     return render_template("posts.html")
+
+
+@app.route("/delete/<id>")
+@login_required
+def delete(id):
+    db.execute("DELETE FROM posts WHERE id = ?", id)
+    return redirect('/')
 
 
 @app.errorhandler(404)
