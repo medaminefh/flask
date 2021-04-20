@@ -119,6 +119,13 @@ def post():
     return render_template("posts.html")
 
 
+@app.route("/delete/<id>")
+@login_required
+def delete(id):
+    db.execute("DELETE FROM posts WHERE id = ?", id)
+    return redirect('/')
+
+
 @app.errorhandler(404)
 # Error handler method in flask 404 (Not Found)
 def errors(e):
