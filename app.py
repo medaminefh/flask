@@ -1,13 +1,16 @@
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, render_template, request, redirect, session, jsonify
 from flask_session import Session
+from flask_cors import CORS
 from cs50 import SQL
 from helpers import apology, login_required
 from tempfile import mkdtemp
 from werkzeug.security import check_password_hash, generate_password_hash
+import jwt
+from secrets import secret, algorithm
 
 # This line of code below tells flask to convert this file to a flask app
 app = Flask(__name__)
-
+CORS(app)
 # Configure session to use filesystem (instead of signed cookies)
 app.config["SESSION_FILE_DIR"] = mkdtemp()
 app.config["SESSION_PERMANENT"] = False
@@ -23,38 +26,41 @@ db = SQL("sqlite:///sql.db")
 
 @app.route('/')
 @login_required
-def hello_world():
-    print(db.execute("SELECT * FROM posts"))
-
+def home():
     '''
     db.execute(
-        "CREATE TABLE posts (id INTEGER, user_id INTEGER, title TEXT, body TEXT, img_url TEXT DEFAULT FALSE, PRIMARY KEY(id))")
-    db.execute(
-        "CREATE TABLE users (id INTEGER, username TEXT, password TEXT, PRIMARY KEY(id))")
+        "CREATE TABLE users(id INTEGER ,username TEXT UNIQUE NOT NULL,password TEXT NOT NULL , PRIMARY KEY(id))")
+
+    db.execute("CREATE TABLE photos(id INTEGER,img_url TEXT NOT NULL,user_id INTEGER NOT NULL,FOREIGN KEY(user_id) REFERENCES users(id),PRIMARY KEY(id))")
+
+    db.execute("CREATE TABLE comments(id INTEGER,text TEXT NOT NULL,photo_id INTEGER NOT NULL,user_id INTEGER NOT NULL,FOREIGN KEY(photo_id) REFERENCES photos(id),FOREIGN KEY(user_id) REFERENCES users(id),PRIMARY KEY(id))")
+
+    db.execute("CREATE TABLE likes(user_id INTEGER NOT NULL,photo_id INTEGER NOT NULL,FOREIGN KEY(user_id) REFERENCES users(id),FOREIGN KEY(photo_id) REFERENCES photos(id),PRIMARY KEY(user_id, photo_id))")
+
+    db.execute("CREATE TABLE follows(follower_id INTEGER NOT NULL,followee_id INTEGER NOT NULL,FOREIGN KEY(follower_id) REFERENCES users(id),FOREIGN KEY(followee_id) REFERENCES users(id),PRIMARY KEY(follower_id, followee_id))")
     '''
-    posts = db.execute(
-        "SELECT * FROM posts WHERE user_id = ?", session["user_id"])
-    user = db.execute("SELECT * FROM users WHERE id = ?",
-                      session["user_id"])[0]
-    return render_template("home.html", posts=posts, user=user)
+    photos = db.execute("SELECT * FROM photos")
+    return jsonify({"photos": photos, "session": session.get("user_id")})
 
 
-@app.route("/login", methods=["GET", "POST"])
+@app.route("/login", methods=["POST"])
 def login():
     session.clear()
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
         if not username or not password:
-            return apology("fill all the fields!")
+            return jsonify({"error": "fill all the fields!"})
         user = db.execute("SELECT * FROM users WHERE username = ?", username)
         if not user:
-            return apology("username not exist", 404)
+            return jsonify({"error": "username not exist"}, 404)
         if not check_password_hash(user[0]['password'], password):
-            return apology("Password Incorrect!")
+            return jsonify({"error": "Password Incorrect!"})
         session["user_id"] = user[0]['id']
-        return redirect("/")
-    return render_template("login.html")
+        user = {"username": user[0]['username'], "id": user[0]['id']}
+        encoded_jwt = jwt.encode(
+            {"id": user['id']}, secret, algorithm=algorithm)
+        return jsonify({"user": user, "jwt": encoded_jwt}), 200
 
 
 @app.route("/logout")
