@@ -5,13 +5,13 @@ import {
   Switch,
   useHistory,
 } from "react-router-dom";
-import { Home, SignIn, Nav } from "./components/export";
+import { Home, SignIn, Nav, CreatePost } from "./components/export";
 import { initialState, reducer } from "./helpers/userReducers";
 export const UserContext = createContext();
 export const { Provider, Consumer } = UserContext;
 const Routing = () => {
   const history = useHistory();
-  const { dispatch } = useContext(UserContext);
+  const { state, dispatch } = useContext(UserContext);
 
   const user = JSON.parse(localStorage.getItem("user"));
 
@@ -28,7 +28,7 @@ const Routing = () => {
       <Route exact path="/profile" component={Home} />
       <Route path="/signup" component={SignIn} />
       <Route path="/login" component={SignIn} />
-      <Route path="/create" component={Home} />
+      <Route path="/create" component={CreatePost} />
       <Route path="/profile/:userid" component={Home} />
       <Route path="/mysub" component={Home} />
     </Switch>
@@ -36,10 +36,9 @@ const Routing = () => {
 };
 
 const App = () => {
-  const user = JSON.parse(localStorage.getItem("user"));
   const [state, dispatch] = useReducer(reducer, initialState);
   return (
-    <Provider value={{ state, dispatch, user }}>
+    <Provider value={{ state, dispatch }}>
       <Router>
         <Nav />
         <Routing />

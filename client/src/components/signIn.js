@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useHistory } from "react-router-dom";
+import { UserContext } from "../App";
 import "./signIn.css";
 
 const SignIn = () => {
   const history = useHistory();
+  const { dispatch } = useContext(UserContext);
   const [isSignIn, setIsSignIn] = useState(true);
 
   const handleLogin = (e) => {
@@ -18,7 +20,8 @@ const SignIn = () => {
         console.log(data);
         if (data.user) {
           localStorage.setItem("user", JSON.stringify(data.user));
-          localStorage.setItem("token", JSON.stringify(data.jwt));
+          localStorage.setItem("jwt", data.jwt);
+          dispatch({ type: "USER", payload: data.user });
           history.push("/");
         }
       })
@@ -33,7 +36,12 @@ const SignIn = () => {
     formdata.append("confirm", confirm.value);
     fetch("/register", { method: "POST", body: formdata })
       .then((res) => res.json())
-      .then((data) => console.log(data))
+      .then((data) => {
+        if (!data.error) {
+          console.log(data);
+          setIsSignIn(true);
+        }
+      })
       .catch((err) => console.log(err));
   };
   const handleChange = () => setIsSignIn((prev) => !prev);

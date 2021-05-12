@@ -39,6 +39,10 @@ const Nav = () => {
       <li>
         <button
           onClick={(e) => {
+            fetch("/logout")
+              .then((res) => res.json())
+              .then((data) => console.log(data))
+              .catch((err) => console.log(err));
             localStorage.clear();
             dispatch({ type: "CLEAR" });
             history.push("/login");
