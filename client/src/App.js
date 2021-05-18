@@ -1,14 +1,32 @@
 import React, { useEffect, useReducer, useContext, createContext } from "react";
+import "./App.css";
 import {
   BrowserRouter as Router,
   Route,
   Switch,
   useHistory,
+  Redirect,
 } from "react-router-dom";
-import { Home, SignIn, Nav, CreatePost } from "./components/export";
+import { Home, SignIn, Nav, CreatePost, Profile } from "./components/export";
 import { initialState, reducer } from "./helpers/userReducers";
 export const UserContext = createContext();
 export const { Provider, Consumer } = UserContext;
+const ProtectedRoute = ({ component: Component, ...props }) => {
+  return (
+    <Route
+      {...props}
+      render={(props) =>
+        localStorage.getItem("user") &&
+        localStorage.getItem("jwt").length > 40 ? (
+          <Component {...props} />
+        ) : (
+          <Redirect to="/login" />
+        )
+      }
+    />
+  );
+};
+
 const Routing = () => {
   const history = useHistory();
   const { state, dispatch } = useContext(UserContext);
@@ -24,13 +42,14 @@ const Routing = () => {
   }, []);
   return (
     <Switch>
-      <Route exact path="/" component={Home} />
-      <Route exact path="/profile" component={Home} />
+      <ProtectedRoute exact path="/" component={Home} />
+      <ProtectedRoute exact path="/profile" component={Profile} />
       <Route path="/signup" component={SignIn} />
       <Route path="/login" component={SignIn} />
-      <Route path="/create" component={CreatePost} />
-      <Route path="/profile/:userid" component={Home} />
-      <Route path="/mysub" component={Home} />
+      <ProtectedRoute path="/create" component={CreatePost} />
+      <ProtectedRoute path="/profile/:userid" component={Home} />
+      <ProtectedRoute path="/mysub" component={Home} />
+      <ProtectedRoute path="*" component={Home} />
     </Switch>
   );
 };
@@ -40,7 +59,7 @@ const App = () => {
   return (
     <Provider value={{ state, dispatch }}>
       <Router>
-        <Nav />
+        {state && <Nav />}
         <Routing />
       </Router>
     </Provider>

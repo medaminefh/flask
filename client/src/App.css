@@ -1,0 +1,9 @@
+@import url("https://fonts.googleapis.com/css?family=Quicksand:400,500,700");
+html,
+body {
+  box-sizing: border-box;
+  font-family: "Quicksand", sans-serif;
+}
+.navbar-brand .text-light {
+  text-decoration: none;
+}

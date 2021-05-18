@@ -3,65 +3,57 @@ import { Link, useHistory } from "react-router-dom";
 import { UserContext } from "../App";
 
 const Nav = () => {
-  const { state, dispatch } = useContext(UserContext);
+  const { dispatch } = useContext(UserContext);
   const history = useHistory();
-  const notLoggedIn = (
-    <ul className="navbar-nav ml-auto mt-2 mt-lg-0 align-items-center">
-      <li>
-        <Link className=" black-text text-darken-2" to="/login">
-          Login
-        </Link>
-      </li>
-      <li>
-        <Link className=" black-text text-darken-2" to="/signup">
-          Signup
-        </Link>
-      </li>
-    </ul>
-  );
-  const loggedIn = (
-    <ul className="navbar-nav ml-auto mt-2 mt-lg-0 align-items-center">
-      <li>
-        <Link className=" black-text text-darken-2" to="/profile">
-          Profile
-        </Link>
-      </li>
-      <li>
-        <Link className=" black-text text-darken-2" to="/mysub">
-          My Followers
-        </Link>
-      </li>
-      <li>
-        <Link className=" black-text text-darken-2" to="/create">
-          Create A Post
-        </Link>
-      </li>
-      <li>
-        <button
-          onClick={(e) => {
-            fetch("/logout")
-              .then((res) => res.json())
-              .then((data) => console.log(data))
-              .catch((err) => console.log(err));
-            localStorage.clear();
-            dispatch({ type: "CLEAR" });
-            history.push("/login");
-          }}
-          className="red darken-1 btn waves-effect waves-light"
-        >
-          Logout
-        </button>
-      </li>
-    </ul>
-  );
-  const renderList = state ? loggedIn : notLoggedIn;
+
+  const handleClick = (e) => {
+    fetch("/logout")
+      .then((res) => res.json())
+      .then((data) => console.log(data))
+      .catch((err) => console.log(err));
+    localStorage.clear();
+    dispatch({ type: "CLEAR" });
+    history.push("/login");
+  };
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-light static-top">
-      <Link to={state ? "/" : "/login"} className="navbar-brand">
-        weTalk
+    <nav className="navbar navbar-expand-lg navbar-light bg-light">
+      <Link className="navbar-brand" to="/">
+        WeTalk
       </Link>
-      {renderList}
+      <button
+        className="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarText"
+        aria-controls="navbarText"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span className="navbar-toggler-icon"></span>
+      </button>
+      <div className="collapse navbar-collapse" id="navbarText">
+        <ul className="navbar-nav mr-auto">
+          <li className="nav-item">
+            <Link to="/" className="nav-link">
+              Home
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link to="/profile" className="nav-link">
+              Profile
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link to="/create" className="nav-link" href="#">
+              publish
+            </Link>
+          </li>
+        </ul>
+        <button onClick={handleClick} className="btn btn-outline-dark">
+          logout
+        </button>
+      </div>
     </nav>
   );
 };

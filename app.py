@@ -54,7 +54,7 @@ def login():
         return jsonify({"error": "fill all the fields!"})
     user = db.execute("SELECT * FROM users WHERE username = ?", username)
     if not user:
-        return jsonify({"error": "username not exist"}, 404)
+        return jsonify({"error": "username not exist"}), 404
     if not check_password_hash(user[0]['password'], password):
         return jsonify({"error": "Password Incorrect!"})
     session["user_id"] = user[0]['id']

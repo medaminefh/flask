@@ -1,12 +1,15 @@
 import { useState, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import { UserContext } from "../App";
+import { SignInView } from "../views/signInView";
 import "./signIn.css";
 
 const SignIn = () => {
   const history = useHistory();
   const { dispatch } = useContext(UserContext);
   const [isSignIn, setIsSignIn] = useState(true);
+  const [registerError, setRegisterError] = useState("");
+  const [loginError, setLoginError] = useState("");
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -18,12 +21,14 @@ const SignIn = () => {
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
-        if (data.user) {
+        if (!data.error) {
           localStorage.setItem("user", JSON.stringify(data.user));
           localStorage.setItem("jwt", data.jwt);
           dispatch({ type: "USER", payload: data.user });
           history.push("/");
+          return;
         }
+        setLoginError(data.error);
       })
       .catch((err) => console.log(err));
   };
@@ -34,138 +39,32 @@ const SignIn = () => {
     formdata.append("username", username.value);
     formdata.append("password", password.value);
     formdata.append("confirm", confirm.value);
+    if (password.value !== confirm.value)
+      setRegisterError("Password Not Matched!");
     fetch("/register", { method: "POST", body: formdata })
       .then((res) => res.json())
       .then((data) => {
+        console.log(data);
         if (!data.error) {
           console.log(data);
           setIsSignIn(true);
+          return;
         }
+        setRegisterError(data.error);
       })
       .catch((err) => console.log(err));
   };
   const handleChange = () => setIsSignIn((prev) => !prev);
-  switch (isSignIn) {
-    case true:
-      return (
-        <div className="container">
-          <div className="sidenav">
-            <div className="login-main-text">
-              <h2>
-                Application
-                <br /> Login Page
-              </h2>
-              <p>Login or register from here to access.</p>
-            </div>
-          </div>
-          <div className="main">
-            <div className="col-md-6 col-sm-12">
-              <div className="login-form">
-                <form onSubmit={handleLogin}>
-                  <div className="form-group">
-                    <label>User Name</label>
-                    <input
-                      name="username"
-                      autoFocus
-                      type="text"
-                      className="form-control"
-                      placeholder="User Name"
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>Password</label>
-                    <input
-                      name="password"
-                      type="password"
-                      className="form-control"
-                      placeholder="Password"
-                    />
-                  </div>
-                  <div className="s">
-                    <button type="submit" className="btn btn-black">
-                      Login
-                    </button>
-                    <p
-                      role="button"
-                      onClick={handleChange}
-                      className="text text-primary m-0"
-                    >
-                      Don't Have an Account?
-                    </p>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-      );
-      break;
-    case false:
-      return (
-        <div className="container">
-          <div className="sidenav">
-            <div className="login-main-text">
-              <h2>
-                Application
-                <br /> Login Page
-              </h2>
-              <p>Login or register from here to access.</p>
-            </div>
-          </div>
-          <div className="main">
-            <div className="col-md-6 col-sm-12">
-              <div className="login-form">
-                <form onSubmit={handleRegister}>
-                  <div className="form-group">
-                    <label>User Name</label>
-                    <input
-                      name="username"
-                      autoFocus
-                      type="text"
-                      className="form-control"
-                      placeholder="UserName"
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>Password</label>
-                    <input
-                      name="password"
-                      type="password"
-                      className="form-control"
-                      placeholder="Password"
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>Confirm Password</label>
-                    <input
-                      name="confirm"
-                      type="password"
-                      className="form-control"
-                      placeholder="Confirm Password"
-                    />
-                  </div>
-                  <div className="s">
-                    <button type="submit" className="btn btn-black">
-                      Register
-                    </button>
-                    <p
-                      role="button"
-                      onClick={handleChange}
-                      className="text text-primary m-0"
-                    >
-                      Have an Account?
-                    </p>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-      );
-      break;
-    default:
-      return <h2>Something went wrong!</h2>;
-  }
+  return (
+    <SignInView
+      isSignIn={isSignIn}
+      handleChange={handleChange}
+      handleLogin={handleLogin}
+      handleRegister={handleRegister}
+      loginError={loginError}
+      registerError={registerError}
+    />
+  );
 };
 
 export default SignIn;

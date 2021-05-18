@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
-import { v4 as uuid } from "uuid";
+//import { v4 as uuid } from "uuid";
 import { UserContext } from "../App";
-import { Link } from "react-router-dom";
+//import { Link } from "react-router-dom";
 import { Posts } from "../views/posts.jsx";
 const Home = () => {
   const { state } = useContext(UserContext);
@@ -9,7 +9,11 @@ const Home = () => {
 
   useEffect(() => {
     const jwt = localStorage.getItem("jwt");
-    if (jwt) {
+    const photos = localStorage.getItem("data");
+    if (photos) {
+      setData(photos);
+      return;
+    } else if (jwt) {
       fetch("http://127.0.0.1:5000/", {
         headers: {
           "Content-Type": "application/json",
@@ -109,7 +113,14 @@ const Home = () => {
   };
 
   return data.photos ? (
-    <div className="d-flex">{<Posts data={data.photos} />}</div>
+    <div
+      className="container d-flex mt-5 mb-5"
+      style={{
+        flexWrap: "wrap",
+      }}
+    >
+      {<Posts data={data.photos} />}
+    </div>
   ) : (
     <h1>Hello world</h1>
   );

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useHistory } from "react-router-dom";
+import { CreatePostView } from "../views/createPostView";
 
 function CreatePost() {
   const history = useHistory();
@@ -76,55 +77,13 @@ function CreatePost() {
   };
 
   return (
-    <div
-      style={{
-        margin: "30px auto",
-        maxWidth: "500px",
-        padding: "20px",
-        textAlign: "center",
-      }}
-      className="card input-field"
-    >
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          postDetails();
-        }}
-      >
-        <input
-          type="text"
-          placeholder="Title"
-          onChange={(e) => setTitle(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="body"
-          onChange={(e) => setBody(e.target.value)}
-        />
-        <div className="file-field input-field">
-          <div className="btn blue darken-1" style={{ display: "flex" }}>
-            <i style={{ marginRight: "5px" }} className="material-icons">
-              cloud_upload
-            </i>
-            <span>File</span>
-            <input type="file" onChange={(e) => setImage(e.target.files[0])} />
-          </div>
-          <div className="file-path-wrapper">
-            <input className="file-path validate" type="text" />
-          </div>
-        </div>
-        <button
-          ref={b}
-          style={{ display: "flex", margin: "0 auto" }}
-          className=" blue darken-1 btn waves-effect waves-light"
-        >
-          <i style={{ marginRight: "5px" }} className="material-icons">
-            save
-          </i>
-          Save
-        </button>
-      </form>
-    </div>
+    <CreatePostView
+      b={b}
+      setBody={setBody}
+      setImage={setImage}
+      setTitle={setTitle}
+      postDetails={postDetails}
+    />
   );
 }
 
