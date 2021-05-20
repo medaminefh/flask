@@ -119,7 +119,7 @@ const Home = () => {
         flexWrap: "wrap",
       }}
     >
-      {<Posts data={data.photos} />}
+      {<Posts photos={data.photos} />}
     </div>
   ) : (
     <h1>Hello world</h1>

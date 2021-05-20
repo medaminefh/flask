@@ -44,7 +44,6 @@ const SignIn = () => {
     fetch("/register", { method: "POST", body: formdata })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         if (!data.error) {
           console.log(data);
           setIsSignIn(true);

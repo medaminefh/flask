@@ -45,7 +45,7 @@ const Nav = () => {
             </Link>
           </li>
           <li className="nav-item">
-            <Link to="/create" className="nav-link" href="#">
+            <Link to="/create" className="nav-link">
               publish
             </Link>
           </li>

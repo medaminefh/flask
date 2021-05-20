@@ -7,7 +7,14 @@ import {
   useHistory,
   Redirect,
 } from "react-router-dom";
-import { Home, SignIn, Nav, CreatePost, Profile } from "./components/export";
+import {
+  Home,
+  SignIn,
+  Nav,
+  CreatePost,
+  Profile,
+  UserProfile,
+} from "./components/export";
 import { initialState, reducer } from "./helpers/userReducers";
 export const UserContext = createContext();
 export const { Provider, Consumer } = UserContext;
@@ -47,7 +54,7 @@ const Routing = () => {
       <Route path="/signup" component={SignIn} />
       <Route path="/login" component={SignIn} />
       <ProtectedRoute path="/create" component={CreatePost} />
-      <ProtectedRoute path="/profile/:userid" component={Home} />
+      <ProtectedRoute path="/user/:userid" component={UserProfile} />
       <ProtectedRoute path="/mysub" component={Home} />
       <ProtectedRoute path="*" component={Home} />
     </Switch>

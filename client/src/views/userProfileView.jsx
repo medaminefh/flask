@@ -1,5 +1,5 @@
 import { v4 as uuid } from "uuid";
-export const ProfileView = ({ user, photos }) => {
+export const UserProfileView = ({ user, photos }) => {
   return (
     <div className="row py-5 px-4">
       <div className="col-md-5 mx-auto">
@@ -14,14 +14,14 @@ export const ProfileView = ({ user, photos }) => {
                   className="rounded mb-2 img-thumbnail"
                 />
                 <a href="#" className="btn btn-outline-dark btn-sm btn-block">
-                  Edit profile
+                  Follow
                 </a>
               </div>
               <div className="media-body mb-5">
                 <h4 className="mt-0 mb-0">{user.username}</h4>
                 <p className="small mb-4">
                   {" "}
-                  <i className="fas fa-map-marker-alt mr-2 "></i>Tunisia
+                  <i className="fas fa-map-marker-alt mr-2 "></i>New York
                 </p>
               </div>
             </div>
@@ -57,11 +57,9 @@ export const ProfileView = ({ user, photos }) => {
           <div className="px-4 py-3">
             <h5 className="mb-0">About</h5>
             <div className="p-4 rounded shadow-sm bg-light">
-              <p className="font-italic mb-0">A Self-Taught Web Developer</p>
-              <p className="font-italic mb-0">From Tunisia</p>
-              <p className="font-italic mb-0">
-                HTML | CSS | JS | Reactjs | Flask | SQL ...
-              </p>
+              <p className="font-italic mb-0">A Designer</p>
+              <p className="font-italic mb-0">Lives in New York</p>
+              <p className="font-italic mb-0">Designs,...</p>
             </div>
           </div>
           <div className="py-4 px-4">

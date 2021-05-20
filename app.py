@@ -40,8 +40,8 @@ db.execute("CREATE TABLE follows(follower_id INTEGER NOT NULL,followee_id INTEGE
 @app.route('/')
 @login_required
 def home(user):
-
-    photos = db.execute("SELECT * FROM photos")
+    photos = db.execute(
+        "SELECT title, body, created_at, img_url, username, users.id FROM photos INNER JOIN users ON photos.user_id = users.id")
     return jsonify({"photos": photos, "userId": user["id"]})
 
 
@@ -100,9 +100,11 @@ def register():
 @login_required
 def profile(user):
 
-    user = db.execute("SELECT * FROM users WHERE id = ?",
+    user = db.execute("SELECT id , username FROM users WHERE id = ?",
                       user["id"])[0]
-    return render_template("profile.html", user=user)
+    photos = db.execute(
+        "SELECT title, body, created_at, img_url FROM photos WHERE user_id = ?", user["id"])
+    return jsonify({'user': user, 'photos': photos}), 200
 
 
 @app.route("/createpost", methods=["POST"])
@@ -121,11 +123,14 @@ def post(user):
     return jsonify({"created": post})
 
 
-@app.route("/delete/<id>")
+@app.route("/user/<id>")
 @login_required
-def delete(id):
-    db.execute("DELETE FROM posts WHERE id = ?", id)
-    return redirect('/')
+def delete(user, id):
+    user = db.execute("SELECT id , username FROM users WHERE id = ?",
+                      id)[0]
+    photos = db.execute(
+        "SELECT title, body, created_at, img_url FROM photos WHERE user_id = ?", id)
+    return jsonify({'user': user, 'photos': photos}), 200
 
 
 @app.errorhandler(404)

@@ -51,7 +51,6 @@ function CreatePost() {
     data.append("cloud_name", cloudName);
 
     if (title && image && body) {
-      b.current.disabled = "true";
       fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
         method: "POST",
         body: data,
@@ -60,14 +59,12 @@ function CreatePost() {
         .then((data) => {
           if (data.error) {
             console.log("error :", data.error);
-            b.current.removeAttribute("disabled");
             return;
           }
           console.log(data);
           setUrl(data.url);
         })
         .catch((err) => {
-          b.current.removeAttribute("disabled");
           console.log("err with uploading img :", err);
         });
     } else {
@@ -78,7 +75,6 @@ function CreatePost() {
 
   return (
     <CreatePostView
-      b={b}
       setBody={setBody}
       setImage={setImage}
       setTitle={setTitle}

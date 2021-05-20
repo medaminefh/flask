@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
-import { ProfileView } from "../views/profileView";
-export const Profile = () => {
+import { useParams } from "react-router-dom";
+import { UserProfileView } from "../views/userProfileView";
+export const UserProfile = () => {
   const [user, setUser] = useState("");
   const [photos, setPhotos] = useState("");
+  const { userid } = useParams();
+
   useEffect(() => {
     const jwt = localStorage.getItem("jwt");
-    fetch("http://127.0.0.1:5000/profile", {
+    fetch(`http://127.0.0.1:5000/user/${userid}`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: jwt,
@@ -19,5 +22,5 @@ export const Profile = () => {
       .catch((err) => console.log(err));
   }, []);
 
-  return photos && <ProfileView user={user} photos={photos} />;
+  return photos && <UserProfileView user={user} photos={photos} />;
 };
