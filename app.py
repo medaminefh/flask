@@ -23,7 +23,7 @@ app.config["TEMPLATES_AUTO_RELOAD"] = True
 
 # Connect to the db
 db = SQL("sqlite:///sql.db")
-'''
+"""
 db.execute(
     "CREATE TABLE users(id INTEGER ,username TEXT UNIQUE NOT NULL,password TEXT NOT NULL , PRIMARY KEY(id))")
 
@@ -34,7 +34,7 @@ db.execute("CREATE TABLE comments(id INTEGER,text TEXT NOT NULL,photo_id INTEGER
 db.execute("CREATE TABLE likes(user_id INTEGER NOT NULL,photo_id INTEGER NOT NULL,FOREIGN KEY(user_id) REFERENCES users(id),FOREIGN KEY(photo_id) REFERENCES photos(id),PRIMARY KEY(user_id, photo_id))")
 
 db.execute("CREATE TABLE follows(follower_id INTEGER NOT NULL,followee_id INTEGER NOT NULL,FOREIGN KEY(follower_id) REFERENCES users(id),FOREIGN KEY(followee_id) REFERENCES users(id),PRIMARY KEY(follower_id, followee_id))")
-'''
+"""
 
 
 @app.route('/')
@@ -58,7 +58,6 @@ def login():
     if not check_password_hash(user[0]['password'], password):
         return jsonify({"error": "Password Incorrect!"})
     session["user_id"] = user[0]['id']
-    print(session.get("user_id"))
     user = {"username": user[0]['username'], "id": user[0]['id']}
 
     encoded_jwt = jwt.encode(

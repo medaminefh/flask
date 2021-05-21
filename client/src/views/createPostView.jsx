@@ -1,4 +1,5 @@
 export const CreatePostView = ({
+  btnStatus,
   postDetails,
   setBody,
   setImage,
@@ -40,8 +41,12 @@ export const CreatePostView = ({
           className="form-file-input"
         />
       </div>
-      <button type="submit" className="btn btn-outline-primary btn-sm">
-        Submit
+      <button
+        disabled={btnStatus != "Submit" ? true : false}
+        type="submit"
+        className="btn btn-outline-primary btn-sm"
+      >
+        {btnStatus}
       </button>
     </form>
   </div>

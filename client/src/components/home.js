@@ -1,11 +1,7 @@
-import React, { useState, useEffect, useContext } from "react";
-//import { v4 as uuid } from "uuid";
-import { UserContext } from "../App";
-//import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
 import { Posts } from "../views/posts.jsx";
 const Home = () => {
-  const { state } = useContext(UserContext);
-  const [data, setData] = useState([]);
+  const [data, setData] = useState("");
 
   useEffect(() => {
     const jwt = localStorage.getItem("jwt");
@@ -112,7 +108,7 @@ const Home = () => {
       });
   };
 
-  return data.photos ? (
+  return data ? (
     <div
       className="container d-flex mt-5 mb-5"
       style={{
@@ -122,7 +118,7 @@ const Home = () => {
       {<Posts photos={data.photos} />}
     </div>
   ) : (
-    <h1>Hello world</h1>
+    <h1 className="text-center">There is No Photos</h1>
   );
 };
 

@@ -2,6 +2,17 @@ import { v4 as uuid } from "uuid";
 import { Link } from "react-router-dom";
 export const Posts = ({ photos }) => {
   const id = JSON.parse(localStorage.getItem("user")).id;
+  if (photos.length == 0) {
+    return (
+      <h1 className="text-center">
+        There is No Posts, Go{" "}
+        <Link className="text-primary" to="/create">
+          Create
+        </Link>{" "}
+        One
+      </h1>
+    );
+  }
   return photos.map((photo) => (
     <div
       key={uuid()}
@@ -14,7 +25,7 @@ export const Posts = ({ photos }) => {
       }}
     >
       <Link
-        className="h4"
+        className="h3 text-primary"
         to={photo.id == id ? "/profile" : `/user/${photo.id}`}
       >
         {photo.username}
@@ -30,9 +41,7 @@ export const Posts = ({ photos }) => {
         alt={photo.title}
       />
       <p className="card-text">
-        <small className="text-muted float-right">
-          Last updated 3 mins ago
-        </small>
+        <small className="text-muted float-right">{photo.created_at}</small>
       </p>
     </div>
   ));

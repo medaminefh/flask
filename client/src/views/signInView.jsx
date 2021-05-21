@@ -6,8 +6,6 @@ export const SignInView = ({
   registerError,
   loginError,
 }) => {
-  console.log(registerError);
-  console.log(loginError);
   switch (isSignIn) {
     case true:
       return (
@@ -68,10 +66,7 @@ export const SignInView = ({
         <div className="container">
           <div className="sidenav">
             <div className="login-main-text">
-              <h2>
-                Application
-                <br /> Login Page
-              </h2>
+              <h1 className="text-success">WeTalk</h1>
               <p>Login or register from here to access.</p>
             </div>
           </div>
