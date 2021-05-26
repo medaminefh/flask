@@ -16,7 +16,7 @@ export const Posts = ({ photos }) => {
   return photos.map((photo) => (
     <div
       key={uuid()}
-      className="text-center card mt-5 ml-2 shadow-lg"
+      className="text-center card mt-5 ml-2 border border-secondary"
       style={{
         width: "18rem",
         maxWidth: "20rem",

@@ -45,6 +45,7 @@ const SignIn = () => {
       .then((res) => res.json())
       .then((data) => {
         if (!data.error) {
+          setLoginError("");
           setRegisterError("");
           setIsSignIn(true);
           return;
@@ -53,7 +54,11 @@ const SignIn = () => {
       })
       .catch((err) => console.log(err));
   };
-  const handleChange = () => setIsSignIn((prev) => !prev);
+  const handleChange = () => {
+    setLoginError("");
+    setRegisterError("");
+    setIsSignIn((prev) => !prev);
+  };
   return (
     <SignInView
       isSignIn={isSignIn}
